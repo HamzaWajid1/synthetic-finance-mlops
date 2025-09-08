@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow / logs / models
+mlruns/
+*.log
+*.pkl
+*.h5
+
+# Streamlit / dashboard
+.streamlit/
+
+# OS
+.DS_Store
+Thumbs.db
