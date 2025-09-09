@@ -54,7 +54,7 @@ synthetic-finance-mlops/
 Clone repo & create environment:  
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/synthetic-finance-mlops.git
+git clone https://github.com/HamzaWajid1/synthetic-finance-mlops.git
 cd synthetic-finance-mlops
 
 # Create venv
