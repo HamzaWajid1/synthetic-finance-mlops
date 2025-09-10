@@ -63,55 +63,56 @@ source venv/bin/activate    # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
-🚀 Usage
-1️⃣ Preprocess Data
+## 🚀 Usage
+
+### 1️⃣ Preprocess Data
+```bash
 python src/preprocess.py
+```
 
-2️⃣ Train Model
+### 2️⃣ Train Model
+```bash
 python src/train.py
+```
 
-3️⃣ Run FastAPI Service
+### 3️⃣ Run FastAPI Service
+```bash
 uvicorn api.main:app --reload
+```
 
+**Endpoint examples:**
+- `POST /predict` → Input transaction JSON → Returns anomaly score/fraud label
+- `GET /health` → Health check
 
-Endpoint examples:
-
-POST /predict → Input transaction JSON → Returns anomaly score/fraud label
-
-GET /health → Health check
-
-4️⃣ Launch Dashboard
+### 4️⃣ Launch Dashboard
+```bash
 streamlit run dashboard/app.py
+```
 
-📊 Results
+## 📊 Results
 
-Models compared: Isolation Forest, LOF, Autoencoder, XGBoost
+- **Models compared:** Isolation Forest, LOF, Autoencoder, XGBoost
+- **Metrics:** Accuracy, Precision, Recall, F1, ROC-AUC
+- **Visualizations:** anomaly clusters, SHAP importance, fraud detection over time
 
-Metrics: Accuracy, Precision, Recall, F1, ROC-AUC
+## 🛳 Deployment
 
-Visualizations: anomaly clusters, SHAP importance, fraud detection over time
+- **Local:** Dockerized API + dashboard
+- **Cloud (optional):** Kubernetes manifest included in `docker/k8s-deployment.yaml`
 
-🛳 Deployment
+## 🔮 Future Work
 
-Local: Dockerized API + dashboard
+- Real-time fraud detection with Kafka streams
+- Bayesian inference for uncertainty estimation
+- Extension to cryptocurrency fraud detection datasets
 
-Cloud (optional): Kubernetes manifest included in docker/k8s-deployment.yaml
-
-🔮 Future Work
-
-Real-time fraud detection with Kafka streams
-
-Bayesian inference for uncertainty estimation
-
-Extension to cryptocurrency fraud detection datasets
-
-📜 License
+## 📜 License
 
 MIT License – free to use, modify, and distribute.
 
-🙌 Acknowledgments
+## 🙌 Acknowledgments
 
-Dataset: TestDataBox Synthetic Finance Dataset
-
-Inspiration: Real-world fraud detection systems in fintech & banking
+- **Dataset:** TestDataBox Synthetic Finance Dataset
+- **Inspiration:** Real-world fraud detection systems in fintech & banking
