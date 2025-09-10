@@ -4,7 +4,7 @@ This project focuses on **detecting anomalies and fraudulent activities** in syn
 It combines **machine learning, statistical inference, and MLOps best practices** to create a production-ready pipeline.
 
 Developed as part of **UC Santa Cruz – Intro to Machine Learning (Final Project, 20%)**,  
-but extended into a **portfolio-grade project** to showcase skills for AI/ML internships.
+but extended into a **portfolio-grade project** to showcase skills for AI/ML roles.
 
 ---
 
@@ -28,25 +28,6 @@ but extended into a **portfolio-grade project** to showcase skills for AI/ML int
 - **Deployment**: Docker, Kubernetes  
 - **Big Data**: PySpark, Dask  
 - **Visualization**: Matplotlib, Seaborn, Plotly, Streamlit  
-
----
-
-## 📂 Project Structure
-synthetic-finance-mlops/
-├── data/ # Raw + processed data
-├── notebooks/ # Jupyter notebooks for EDA & modeling
-├── src/ # Core Python modules (preprocess, train, evaluate)
-├── models/ # Saved models
-├── api/ # FastAPI service
-├── docker/ # Docker + Kubernetes configs
-├── airflow/ # Workflow orchestration (Prefect/Airflow)
-├── dashboard/ # Streamlit dashboard
-├── tests/ # Unit tests
-├── requirements.txt # Dependencies
-├── setup.sh # Quick setup script
-├── .gitignore
-└── README.md
-
 
 ---
 
