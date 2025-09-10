@@ -31,9 +31,6 @@ but extended into a **portfolio-grade project** to showcase skills for AI/ML int
 
 ---
 
-
----
-
 ## ⚡ Installation
 Clone repo & create environment:  
 
