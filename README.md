@@ -31,22 +31,6 @@ but extended into a **portfolio-grade project** to showcase skills for AI/ML int
 
 ---
 
-## 📂 Project Structure
-synthetic-finance-mlops/
-├── data/ # Raw + processed data
-├── notebooks/ # Jupyter notebooks for EDA & modeling
-├── src/ # Core Python modules (preprocess, train, evaluate)
-├── models/ # Saved models
-├── api/ # FastAPI service
-├── docker/ # Docker + Kubernetes configs
-├── airflow/ # Workflow orchestration (Prefect/Airflow)
-├── dashboard/ # Streamlit dashboard
-├── tests/ # Unit tests
-├── requirements.txt # Dependencies
-├── setup.sh # Quick setup script
-├── .gitignore
-└── README.md
-
 
 ---
 
