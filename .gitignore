@@ -29,7 +29,9 @@ mlruns/
 .DS_Store
 Thumbs.db
 
-#data
+# Data files
 data/
+data/raw/
+data/raw/*.csv
 # documentation
 Project Documentation.docx
