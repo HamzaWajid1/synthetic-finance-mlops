@@ -28,3 +28,10 @@ mlruns/
 # OS
 .DS_Store
 Thumbs.db
+
+# Data files
+data/
+data/raw/
+data/raw/*.csv
+# documentation
+Project Documentation.docx

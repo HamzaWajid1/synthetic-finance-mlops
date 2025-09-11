@@ -5,8 +5,7 @@
 python -m venv venv
 
 # 2. Activate environment 
-source venv\Scripts\activate # On Mac: venv/bin/activate
-
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 # 3. Upgrade pip
 pip install --upgrade pip
 

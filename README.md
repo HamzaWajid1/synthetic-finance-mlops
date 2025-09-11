@@ -4,7 +4,7 @@ This project focuses on **detecting anomalies and fraudulent activities** in syn
 It combines **machine learning, statistical inference, and MLOps best practices** to create a production-ready pipeline.
 
 Developed as part of **UC Santa Cruz – Intro to Machine Learning (Final Project, 20%)**,  
-but extended into a **portfolio-grade project** to showcase skills for AI/ML internships.
+but extended into a **portfolio-grade project** to showcase skills for AI/ML roles.
 
 ---
 
@@ -31,30 +31,11 @@ but extended into a **portfolio-grade project** to showcase skills for AI/ML int
 
 ---
 
-## 📂 Project Structure
-synthetic-finance-mlops/
-├── data/ # Raw + processed data
-├── notebooks/ # Jupyter notebooks for EDA & modeling
-├── src/ # Core Python modules (preprocess, train, evaluate)
-├── models/ # Saved models
-├── api/ # FastAPI service
-├── docker/ # Docker + Kubernetes configs
-├── airflow/ # Workflow orchestration (Prefect/Airflow)
-├── dashboard/ # Streamlit dashboard
-├── tests/ # Unit tests
-├── requirements.txt # Dependencies
-├── setup.sh # Quick setup script
-├── .gitignore
-└── README.md
-
-
----
-
 ## ⚡ Installation
 Clone repo & create environment:  
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/synthetic-finance-mlops.git
+git clone https://github.com/HamzaWajid1/synthetic-finance-mlops.git
 cd synthetic-finance-mlops
 
 # Create venv
@@ -63,55 +44,56 @@ source venv/bin/activate    # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
-🚀 Usage
-1️⃣ Preprocess Data
+## 🚀 Usage
+
+### 1️⃣ Preprocess Data
+```bash
 python src/preprocess.py
+```
 
-2️⃣ Train Model
+### 2️⃣ Train Model
+```bash
 python src/train.py
+```
 
-3️⃣ Run FastAPI Service
+### 3️⃣ Run FastAPI Service
+```bash
 uvicorn api.main:app --reload
+```
 
+**Endpoint examples:**
+- `POST /predict` → Input transaction JSON → Returns anomaly score/fraud label
+- `GET /health` → Health check
 
-Endpoint examples:
-
-POST /predict → Input transaction JSON → Returns anomaly score/fraud label
-
-GET /health → Health check
-
-4️⃣ Launch Dashboard
+### 4️⃣ Launch Dashboard
+```bash
 streamlit run dashboard/app.py
+```
 
-📊 Results
+## 📊 Results
 
-Models compared: Isolation Forest, LOF, Autoencoder, XGBoost
+- **Models compared:** Isolation Forest, LOF, Autoencoder, XGBoost
+- **Metrics:** Accuracy, Precision, Recall, F1, ROC-AUC
+- **Visualizations:** anomaly clusters, SHAP importance, fraud detection over time
 
-Metrics: Accuracy, Precision, Recall, F1, ROC-AUC
+## 🛳 Deployment
 
-Visualizations: anomaly clusters, SHAP importance, fraud detection over time
+- **Local:** Dockerized API + dashboard
+- **Cloud (optional):** Kubernetes manifest included in `docker/k8s-deployment.yaml`
 
-🛳 Deployment
+## 🔮 Future Work
 
-Local: Dockerized API + dashboard
+- Real-time fraud detection with Kafka streams
+- Bayesian inference for uncertainty estimation
+- Extension to cryptocurrency fraud detection datasets
 
-Cloud (optional): Kubernetes manifest included in docker/k8s-deployment.yaml
-
-🔮 Future Work
-
-Real-time fraud detection with Kafka streams
-
-Bayesian inference for uncertainty estimation
-
-Extension to cryptocurrency fraud detection datasets
-
-📜 License
+## 📜 License
 
 MIT License – free to use, modify, and distribute.
 
-🙌 Acknowledgments
+## 🙌 Acknowledgments
 
-Dataset: TestDataBox Synthetic Finance Dataset
-
-Inspiration: Real-world fraud detection systems in fintech & banking
+- **Dataset:** TestDataBox Synthetic Finance Dataset
+- **Inspiration:** Real-world fraud detection systems in fintech & banking
