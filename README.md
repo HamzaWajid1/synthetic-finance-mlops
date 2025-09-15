@@ -3,7 +3,7 @@
 This project focuses on **detecting anomalies and fraudulent activities** in synthetic financial transaction data.  
 It combines **machine learning, statistical inference, and MLOps best practices** to create a production-ready pipeline.
 
-Developed as part of **UC Santa Cruz – Intro to Machine Learning (Final Project, 20%)**,  
+Developed as part of **UC Santa Cruz – Intro to Machine Learning**,  
 but extended into a **portfolio-grade project** to showcase skills for AI/ML roles.
 
 ---
