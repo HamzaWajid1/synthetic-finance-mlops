@@ -132,8 +132,7 @@ def compute_transaction_features(df):
 
     df=df[features_to_keep]
 
-    df.fillna(0)
-    
+    df = df.fillna(0)
     print("✅ Feature engineering completed!")
     
     return df
