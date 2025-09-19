@@ -4,7 +4,7 @@ This project focuses on **detecting anomalies and fraudulent activities** in syn
 It combines **machine learning, statistical inference, and MLOps best practices** to create a production-ready pipeline.
 
 Developed as part of **UC Santa Cruz – Intro to Machine Learning**,  
-but extended into a **portfolio-grade project** to showcase skills for SOftware Engineering/AI/ML roles.
+but extended into a **portfolio-grade project** to showcase skills for Software Engineering/AI/ML roles.
 
 ---
 
