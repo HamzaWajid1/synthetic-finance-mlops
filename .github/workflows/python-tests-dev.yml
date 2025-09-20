@@ -32,6 +32,11 @@ jobs:
         run: |
           pytest tests/Unit --maxfail=1 --disable-warnings -q
 
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"    
+
       - name: Check for Merge Conflicts with Staging
         run: |
           git fetch origin staging
