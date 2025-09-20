@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history for merge checks
+          fetch-depth: 0  # fetch full history
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -46,10 +46,12 @@ jobs:
       - name: Create Pull Request to Staging
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}   # Use PAT stored in repo secrets
           base: staging
           branch: dev
           title: "Automated PR: dev → staging"
           body: "This PR is automatically created after successful unit tests on dev and no merge conflicts."
+          force: false   # Avoids force pushing
+
 
 
