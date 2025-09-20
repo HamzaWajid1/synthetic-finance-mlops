@@ -5,39 +5,38 @@ on:
     branches: [dev]
 
 jobs:
-  test-and-deploy:
+  test-and-pr:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.11]
-
     steps:
-      - name: Checkout repository
+      # 1. Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      # 2. Setup Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.11
 
+      # 3. Install dependencies
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
+      # 4. Run Unit Tests
       - name: Run Unit Tests
-        run: |
-          pytest tests/Unit --maxfail=1 --disable-warnings -q
+        run: pytest tests/Unit --maxfail=1 --disable-warnings -q
 
+      # 5. Configure Git identity
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Check for merge conflicts with staging
+      # 6. Check for merge conflicts with staging
+      - name: Check merge conflicts
         run: |
           git fetch origin staging
           git checkout staging
@@ -45,20 +44,31 @@ jobs:
             echo "❌ Merge conflict detected. Manual resolution required."
             exit 1
           fi
-          git reset --hard HEAD  # undo the test merge
+          git reset --hard HEAD  # undo test merge
 
+      # 7. Create or update PR to staging
       - name: Create or Update Pull Request
         id: pr
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}  # PAT with repo scope
           base: staging
           branch: dev
           title: "Automated PR: dev → staging"
           body: "This PR is automatically created after passing unit tests."
-          create-branch: false
-          merge-method: merge  # auto merge PR if possible
-          auto-merge: true     # enable automatic merge
+          commit-message: "[create-pull-request] automated change"
+          delete-branch: false  # keep dev branch
+          create-branch: false  # use existing branch, don't push
+
+      # 8. Auto-merge PR if possible
+      - name: Auto Merge PR
+        if: steps.pr.outputs.pull-request-number != ''
+        uses: devops-infra/action-pull-request@v0.5.4
+        with:
+          github_token: ${{ secrets.PAT_TOKEN }}
+          pull_request_number: ${{ steps.pr.outputs.pull-request-number }}
+          merge_method: merge
+
 
 
 
