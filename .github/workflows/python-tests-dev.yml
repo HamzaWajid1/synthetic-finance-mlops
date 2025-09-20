@@ -1,11 +1,11 @@
-name: Dev Unit Tests & PR to Staging
+name: Dev → Staging CI/CD
 
 on:
   push:
     branches: [dev]
 
 jobs:
-  unit-tests:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,9 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # fetch full history
+          fetch-depth: 0
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -32,26 +32,34 @@ jobs:
         run: |
           pytest tests/Unit --maxfail=1 --disable-warnings -q
 
-      - name: Configure Git identity
+      - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"    
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Check for Merge Conflicts with Staging
+      - name: Check for merge conflicts with staging
         run: |
           git fetch origin staging
           git checkout staging
-          git merge --no-commit --no-ff dev || (echo "❌ Merge conflict detected. Resolve manually." && exit 1)
+          if ! git merge --no-commit --no-ff dev; then
+            echo "❌ Merge conflict detected. Manual resolution required."
+            exit 1
+          fi
+          git reset --hard HEAD  # undo the test merge
 
-      - name: Create Pull Request to Staging
+      - name: Create or Update Pull Request
+        id: pr
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.PAT_TOKEN }}   # Use PAT stored in repo secrets
+          token: ${{ secrets.PAT_TOKEN }}
           base: staging
           branch: dev
           title: "Automated PR: dev → staging"
-          body: "This PR is automatically created after successful unit tests on dev and no merge conflicts."
-          force: false   # Avoids force pushing
+          body: "This PR is automatically created after passing unit tests."
+          create-branch: false
+          merge-method: merge  # auto merge PR if possible
+          auto-merge: true     # enable automatic merge
+
 
 
 
