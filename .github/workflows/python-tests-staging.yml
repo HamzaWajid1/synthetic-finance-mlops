@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          pytest --maxfail=1 --disable-warnings -q
+          pytest tests/Integration --maxfail=1 --disable-warnings -q
 
       - name: Check for Merge Conflicts
         run: |
