@@ -1,0 +1,56 @@
+name: Staging Unit Tests & Auto Merge
+
+on:
+  pull_request:
+    branches: [staging]
+
+jobs:
+  unit-tests-and-merge:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.11]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history to allow merge dry-run
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          pytest tests/Integration --maxfail=1 --disable-warnings -q
+
+      - name: Check for Merge Conflicts
+        run: |
+          git fetch origin staging
+          git checkout staging
+          git merge --no-commit --no-ff $GITHUB_HEAD_REF || (echo "❌ Merge conflict detected. Resolve manually." && exit 1)
+
+      - name: Merge PR into Staging
+        uses: pascalgn/automerge-action@v0.15.4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          merge_method: squash
+          commit_message: "Automated merge of PR to staging after successful unit tests"
+
+      - name: Create PR to Main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: staging
+          title: "Automated PR: staging → main"
+          body: "This PR is automatically created after successful merge into staging."
+
