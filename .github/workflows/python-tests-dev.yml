@@ -5,18 +5,18 @@ on:
     branches: [dev]
 
 jobs:
-  test-and-pr:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
-      - name: Checkout
+      # 1. Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       # 2. Setup Python
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
@@ -35,39 +35,44 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 6. Check for merge conflicts with staging
-      - name: Check merge conflicts
+      # 6. Create PR if it doesn’t exist
+      - name: Create or Update PR
+        id: create_pr
         run: |
-          git fetch origin staging
-          git checkout staging
-          if ! git merge --no-commit --no-ff dev; then
-            echo "❌ Merge conflict detected. Manual resolution required."
-            exit 1
+          PR=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?head=${GITHUB_REPOSITORY_OWNER}:dev&base=staging" \
+            | jq '.[0].number')
+
+          if [ "$PR" = "null" ]; then
+            echo "Creating new PR..."
+            RESPONSE=$(curl -s -X POST \
+              -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls \
+              -d '{"title":"Automated PR: dev → staging","head":"dev","base":"staging","body":"This PR is automatically created after passing unit tests."}')
+            PR=$(echo "$RESPONSE" | jq '.number')
           fi
-          git reset --hard HEAD  # undo test merge
 
-      # 7. Create or update PR to staging
-      - name: Create or Update Pull Request
-        id: pr
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.PAT_TOKEN }}  # PAT with repo scope
-          base: staging
-          branch: dev
-          title: "Automated PR: dev → staging"
-          body: "This PR is automatically created after passing unit tests."
-          commit-message: "[create-pull-request] automated change"
-          delete-branch: false  # keep dev branch
-          create-branch: false  # use existing branch, don't push
+          echo "PR_NUMBER=$PR" >> $GITHUB_ENV
 
-      # 8. Auto-merge PR if possible
+      # 7. Attempt to merge PR automatically
       - name: Auto Merge PR
-        if: steps.pr.outputs.pull-request-number != ''
-        uses: devops-infra/action-pull-request@v0.5.4
-        with:
-          github_token: ${{ secrets.PAT_TOKEN }}
-          pull_request_number: ${{ steps.pr.outputs.pull-request-number }}
-          merge_method: merge
+        if: env.PR_NUMBER != ''
+        run: |
+          RESPONSE=$(curl -s -X PUT \
+            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER/merge \
+            -d '{"merge_method":"merge"}')
+          MERGED=$(echo "$RESPONSE" | jq '.merged')
+          if [ "$MERGED" = "true" ]; then
+            echo "✅ PR merged successfully"
+          else
+            echo "❌ PR could not be merged automatically (possible conflicts)"
+            echo "$RESPONSE"
+            exit 1
+
 
 
 
