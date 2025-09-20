@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
-      - name: Checkout repository
+      # 1. Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -35,43 +35,43 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 6. Create PR if it doesn’t exist
-      - name: Create or Update PR
-        id: create_pr
+      # 6. Create PR if it doesn’t exist & attempt auto-merge
+      - name: Create PR and Auto Merge
         run: |
-          PR=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+          # Check if PR exists
+          PR_NUMBER=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?head=${GITHUB_REPOSITORY_OWNER}:dev&base=staging" \
-            | jq '.[0].number')
+            | jq -r '.[0].number')
 
-          if [ "$PR" = "null" ]; then
+          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
             echo "Creating new PR..."
             RESPONSE=$(curl -s -X POST \
               -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
               -H "Accept: application/vnd.github+json" \
-              https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls \
-              -d '{"title":"Automated PR: dev → staging","head":"dev","base":"staging","body":"This PR is automatically created after passing unit tests."}')
-            PR=$(echo "$RESPONSE" | jq '.number')
+              -d '{"title":"Automated PR: dev → staging","head":"dev","base":"staging","body":"This PR is automatically created after passing unit tests."}' \
+              https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls)
+            PR_NUMBER=$(echo "$RESPONSE" | jq -r '.number')
           fi
 
-          echo "PR_NUMBER=$PR" >> $GITHUB_ENV
+          echo "PR_NUMBER=$PR_NUMBER"
 
-      # 7. Attempt to merge PR automatically
-      - name: Auto Merge PR
-        if: env.PR_NUMBER != ''
-        run: |
+          # Attempt to merge PR
           RESPONSE=$(curl -s -X PUT \
             -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER/merge \
-            -d '{"merge_method":"merge"}')
-          MERGED=$(echo "$RESPONSE" | jq '.merged')
+            -d '{"merge_method":"merge"}' \
+            https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER/merge)
+
+          MERGED=$(echo "$RESPONSE" | jq -r '.merged')
+
           if [ "$MERGED" = "true" ]; then
             echo "✅ PR merged successfully"
           else
             echo "❌ PR could not be merged automatically (possible conflicts)"
             echo "$RESPONSE"
             exit 1
+
 
 
 
