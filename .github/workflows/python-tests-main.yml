@@ -1,13 +1,11 @@
-name: Run Python Tests
+name: Main Integration Tests
 
 on:
-  push:
-    branches: [dev, staging]
   pull_request:
-    branches: [staging, main]
+    branches: [main]
 
 jobs:
-  test:
+  integration-tests:
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,6 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run cleaning function tests
+      - name: Run Integration Tests
         run: |
-          pytest --maxfail=1 --disable-warnings -q
+          pytest tests/Integration/ --maxfail=1 -s
