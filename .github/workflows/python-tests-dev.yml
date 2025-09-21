@@ -3,19 +3,18 @@ name: Dev → Staging PR
 on:
   push:
     branches:
-      - dev
+      - dev   # Trigger on push to dev
 
 jobs:
   test-and-create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
+      # 1. Checkout the repository
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}   # Needed to authenticate push
+          fetch-depth: 0   # Full history needed for PR creation
 
       # 2. Setup Python
       - name: Setup Python
@@ -35,26 +34,26 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"    
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 6. Create PR to staging if tests pass
+      # 6. Create Pull Request to staging if tests pass
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          git-token: ${{ secrets.PAT_TOKEN }}       # Use git-token for push access
+          token: ${{ secrets.GITHUB_TOKEN }}   # Works for public repos
           commit-message: "Auto-create PR from dev"
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
-          branch: dev                               # Source branch (existing dev branch)
-          base: staging                             # Target branch
-          delete-branch: false                      # Keep dev branch
+          branch: dev                             # Source branch
+          base: staging                           # Target branch
+          delete-branch: false                    # Keep dev branch
           title: "Automated PR: dev → staging"
           body: |
             This PR is automatically created after passing unit tests on the `dev` branch.
           labels: automated
           draft: false
+
 
 
 
