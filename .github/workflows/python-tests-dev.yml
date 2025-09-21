@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -34,15 +34,15 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT_TOKEN }}  # Use a PAT with repo scope
+          token: ${{ secrets.PAT_TOKEN }}   # PAT with repo scope
           commit-message: "Auto-create PR from dev"
           title: "Automated PR: dev → staging"
           body: "This PR is automatically created after passing unit tests."
-          head: dev
-          base: staging
+          branch: dev                       # The branch you are merging from
+          base: staging                      # The branch you are merging into
           labels: automated
           draft: false
-          create-branch: false  # Use existing dev branch
+
 
 
 
