@@ -46,7 +46,7 @@ jobs:
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: dev                         # Source branch
-          branch-suffix: pr                   # Creates a temp branch like dev-pr-XXXX
+          branch-suffix: timestamp            # Creates a unique temp branch (e.g., dev-20250920-123456)
           base: staging                       # Target branch
           delete-branch: true                 # Deletes temp branch after PR creation
           title: "Automated PR: dev → staging"
@@ -54,6 +54,7 @@ jobs:
             This PR is automatically created after passing unit tests on the `dev` branch.
           labels: automated
           draft: false
+
 
 
 
