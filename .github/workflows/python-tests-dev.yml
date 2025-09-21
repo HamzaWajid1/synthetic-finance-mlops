@@ -1,50 +1,60 @@
-name: Dev Unit Tests & PR to Staging
+name: Dev → Staging PR
 
 on:
   push:
-    branches: [dev]
+    branches:
+      - dev
 
 jobs:
-  unit-tests:
+  test-and-create-pr:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.11]
-
     steps:
-      - name: Checkout repository
+      # 1. Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history for merge checks
+          fetch-depth: 0
 
-      - name: Set up Python ${{ matrix.python-version }}
+      # 2. Setup Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.11
 
+      # 3. Install dependencies
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
+      # 4. Run Unit Tests
       - name: Run Unit Tests
-        run: |
-          pytest tests/Unit --maxfail=1 --disable-warnings -q
+        run: pytest tests/Unit --maxfail=1 --disable-warnings -q
 
-      - name: Check for Merge Conflicts with Staging
-        run: |
-          git fetch origin staging
-          git checkout staging
-          git merge --no-commit --no-ff dev || (echo "❌ Merge conflict detected. Resolve manually." && exit 1)
-
-      - name: Create Pull Request to Staging
-        uses: peter-evans/create-pull-request@v5
+      # 5. Create Pull Request to staging
+      - name: Create Pull Request
+        uses: devops-infra/action-pull-request@v0.6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: staging
-          branch: dev
+          github_token: ${{ secrets.PAT_TOKEN }}   # Your PAT secret
+          source_branch: dev
+          target_branch: staging
           title: "Automated PR: dev → staging"
-          body: "This PR is automatically created after successful unit tests on dev and no merge conflicts."
+          body: "This PR is automatically created after passing unit tests on the dev branch."
+          label: automated
+          draft: false
+          get_diff: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
