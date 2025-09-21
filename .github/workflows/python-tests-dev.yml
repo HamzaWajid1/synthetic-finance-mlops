@@ -1,11 +1,12 @@
-name: Dev → Staging CI/CD
+name: Dev → Staging PR
 
 on:
   push:
-    branches: [dev]
+    branches:
+      - dev
 
 jobs:
-  test-and-deploy:
+  test-and-create-pr:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,48 +30,20 @@ jobs:
       - name: Run Unit Tests
         run: pytest tests/Unit --maxfail=1 --disable-warnings -q
 
-      # 5. Configure Git identity
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      # 5. Create PR to staging if tests pass
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT_TOKEN }}  # Use a PAT with repo scope
+          commit-message: "Auto-create PR from dev"
+          title: "Automated PR: dev → staging"
+          body: "This PR is automatically created after passing unit tests."
+          head: dev
+          base: staging
+          labels: automated
+          draft: false
+          create-branch: false  # Use existing dev branch
 
-      # 6. Create PR if it doesn’t exist & attempt auto-merge
-      - name: Create PR and Auto Merge
-        run: |
-          # Check if PR exists
-          PR_NUMBER=$(curl -s -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?head=${GITHUB_REPOSITORY_OWNER}:dev&base=staging" \
-            | jq -r '.[0].number')
-
-          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
-            echo "Creating new PR..."
-            RESPONSE=$(curl -s -X POST \
-              -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
-              -H "Accept: application/vnd.github+json" \
-              -d '{"title":"Automated PR: dev → staging","head":"dev","base":"staging","body":"This PR is automatically created after passing unit tests."}' \
-              https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls)
-            PR_NUMBER=$(echo "$RESPONSE" | jq -r '.number')
-          fi
-
-          echo "PR_NUMBER=$PR_NUMBER"
-
-          # Attempt to merge PR
-          RESPONSE=$(curl -s -X PUT \
-            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            -d '{"merge_method":"merge"}' \
-            https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER/merge)
-
-          MERGED=$(echo "$RESPONSE" | jq -r '.merged')
-
-          if [ "$MERGED" = "true" ]; then
-            echo "✅ PR merged successfully"
-          else
-            echo "❌ PR could not be merged automatically (possible conflicts)"
-            echo "$RESPONSE"
-            exit 1
 
 
 
