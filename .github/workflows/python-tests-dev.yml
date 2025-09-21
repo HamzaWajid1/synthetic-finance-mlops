@@ -3,18 +3,18 @@ name: Dev → Staging PR
 on:
   push:
     branches:
-      - dev  # Trigger workflow on push to dev
+      - dev
 
 jobs:
   test-and-create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Full history needed for PR creation
+          fetch-depth: 0
 
       # 2. Setup Python
       - name: Setup Python
@@ -31,29 +31,30 @@ jobs:
         run: pytest tests/Unit --maxfail=1 --disable-warnings -q
 
       # 5. Configure Git identity
-      - name: Configure Git
+      - name: Configure Git identity
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"    
 
-      # 6. Create Pull Request from dev → staging if tests pass
+      # 6. Create Pull Request
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}   # Works for public repos
+          token: ${{ secrets.PAT_TOKEN }}       # PAT with repo scope
           commit-message: "Auto-create PR from dev"
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: dev                         # Source branch
-          branch-suffix: timestamp            # Creates a unique temp branch (e.g., dev-20250920-123456)
-          base: staging                       # Target branch
-          delete-branch: true                 # Deletes temp branch after PR creation
+          signoff: false
+          branch: dev                             # Source branch (existing dev branch)
+          base: staging                           # Target branch
+          delete-branch: false                    # Keep dev branch
           title: "Automated PR: dev → staging"
           body: |
             This PR is automatically created after passing unit tests on the `dev` branch.
           labels: automated
           draft: false
+
 
 
 
