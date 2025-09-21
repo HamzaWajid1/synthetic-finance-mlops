@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
+      # 1. Checkout code
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -30,30 +30,19 @@ jobs:
       - name: Run Unit Tests
         run: pytest tests/Unit --maxfail=1 --disable-warnings -q
 
-      # 5. Configure Git identity
-      - name: Configure Git identity
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"    
-
-      # 6. Create Pull Request
+      # 5. Create Pull Request to staging
       - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: devops-infra/action-pull-request@v0.6
         with:
-          token: ${{ secrets.PAT_TOKEN }}       # PAT with repo scope
-          commit-message: "Auto-create PR from dev"
-          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
-          branch: dev                             # Source branch (existing dev branch)
-          base: staging                           # Target branch
-          delete-branch: false                    # Keep dev branch
+          github_token: ${{ secrets.PAT_TOKEN }}   # Your PAT secret
+          source_branch: dev
+          target_branch: staging
           title: "Automated PR: dev → staging"
-          body: |
-            This PR is automatically created after passing unit tests on the `dev` branch.
-          labels: automated
+          body: "This PR is automatically created after passing unit tests on the dev branch."
+          label: automated
           draft: false
+          get_diff: true
+
 
 
 
