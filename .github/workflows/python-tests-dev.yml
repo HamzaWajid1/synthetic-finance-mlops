@@ -32,16 +32,23 @@ jobs:
 
       # 5. Create PR to staging if tests pass
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}   # PAT with repo scope
+          token: ${{ secrets.PAT_TOKEN }}       # PAT with repo scope
           commit-message: "Auto-create PR from dev"
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: dev                             # Source branch (existing dev branch)
+          base: staging                           # Target branch
+          delete-branch: false                    # Keep dev branch
           title: "Automated PR: dev → staging"
-          body: "This PR is automatically created after passing unit tests."
-          branch: dev                       # The branch you are merging from
-          base: staging                      # The branch you are merging into
+          body: |
+            This PR is automatically created after passing unit tests on the `dev` branch.
           labels: automated
           draft: false
+
 
 
 
