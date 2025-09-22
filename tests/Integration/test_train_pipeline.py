@@ -1,5 +1,6 @@
 import pytest
 import pandas as pd
+from pathlib import Path
 from src.train import run_anomaly_supervised_pipeline
 
 #@pytest.mark.skip(reason="Integration test using full original dataset; run manually")
@@ -9,8 +10,8 @@ def test_run_anomaly_supervised_pipeline_with_real_data():
     + supervised training pipeline using the original dataset.
     """
 
-    # Path to the folder containing all raw CSVs
-    data_folder = r"C:\Users\hamza\OneDrive\Desktop\InterviewPrepUSA\UCSC_Extension\IntroToMachineLearning\synthetic-finance-mlops\data\raw"
+    project_root = Path(__file__).resolve().parents[2]  # go up from tests/
+    data_folder = project_root / "data" / "raw"
 
     # Run full pipeline
     models, X_test, y_test = run_anomaly_supervised_pipeline(data_folder)
