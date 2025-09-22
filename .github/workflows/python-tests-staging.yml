@@ -21,12 +21,16 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-
-      # 3. (Optional) Run Integration Tests
+      
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      # 4. Run Integration Tests
       - name: Run Integration Tests
         run: pytest tests/Integration --maxfail=1 --disable-warnings -q
 
-      # 4. Create Pull Request from staging → main
+      # 5. Create Pull Request from staging → main
       - name: Create PR from staging to main
         uses: devops-infra/action-pull-request@v0.6
         with:
