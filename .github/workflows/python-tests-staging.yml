@@ -5,6 +5,10 @@ on:
     branches:
       - staging  # Trigger when staging gets new commits
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   create-pr-to-main:
     runs-on: ubuntu-latest
