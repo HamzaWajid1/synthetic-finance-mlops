@@ -35,3 +35,7 @@ data/raw/
 data/raw/*.csv
 # documentation
 Project Documentation.docx
+
+#WorkFlows Ignoring for now
+.github\workflows\python-tests-dev.yml
+.github\workflows\python-tests-staging.yml

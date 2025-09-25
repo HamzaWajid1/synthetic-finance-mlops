@@ -1,3 +1,4 @@
+"""
 name: Staging → Main PR
 
 on:
@@ -5,6 +6,10 @@ on:
     branches:
       - staging  # Trigger when staging gets new commits
 
+permissions:
+  contents: write
+  pull-requests: write
+  
 jobs:
   create-pr-to-main:
     runs-on: ubuntu-latest
@@ -46,4 +51,4 @@ jobs:
           allow_no_diff: false
 
 
-
+"""
