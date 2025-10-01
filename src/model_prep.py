@@ -3,7 +3,7 @@ from sklearn.compose import ColumnTransformer
 import pandas as pd
 
 
-def prepare_model_data(df: pd.DataFrame, features: list) -> pd.DataFrame:
+def prepare_model_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Selects useful features, standardizes them, and returns scaled data.
 
@@ -11,8 +11,7 @@ def prepare_model_data(df: pd.DataFrame, features: list) -> pd.DataFrame:
     ----------
     df : pd.DataFrame
         Preprocessed DataFrame (from preprocess.py).
-    features : list
-        List of features to keep for model training.
+    
 
     Returns
     -------
@@ -20,7 +19,7 @@ def prepare_model_data(df: pd.DataFrame, features: list) -> pd.DataFrame:
         Scaled feature DataFrame, ready for unsupervised model training.
     """
     # Subset features
-    df_selected = df[features].copy()
+    df_selected = df.copy()
 
     # Numerical features to scale
     numeric_features = [
@@ -33,6 +32,9 @@ def prepare_model_data(df: pd.DataFrame, features: list) -> pd.DataFrame:
         "Age_Difference", "Origin_LoanLeverage", "Dest_LoanLeverage"
     ]
 
+    # Define features from DataFrame
+    features = df_selected.columns.tolist()
+    
     # All remaining features → categorical (IDs + binary flags)
     categorical_features = [
         col for col in features if col not in numeric_features

@@ -68,6 +68,25 @@ def preprocess_data(data_folder: str) -> pd.DataFrame:
     # === Fill missing values ===
     df = df.fillna(0)
 
+    #List of features to keep for model training.
+    features_to_keep = [
+        "TransactionTypeID", "Amount",
+        "Origin_AccountTypeID", "Origin_AccountStatusID", "Origin_Balance",
+        "Dest_AccountTypeID", "Dest_AccountStatusID", "Dest_Balance",
+        "Origin_CustomerTypeID", "Dest_CustomerTypeID",
+        "Origin_LoanCount", "Origin_TotalPrincipal", "Origin_AvgInterestRate",
+        "Dest_LoanCount", "Dest_TotalPrincipal", "Dest_AvgInterestRate",
+        "Origin_LoanStatus_Active", "Origin_LoanStatus_Overdue", "Origin_LoanStatus_Paid Off",
+        "Dest_LoanStatus_Active", "Dest_LoanStatus_Overdue", "Dest_LoanStatus_Paid Off",
+        "Amount_to_OriginBalance", "Amount_to_DestBalance", "Amount_to_AvgTransaction",
+        "Origin_AccountInactive", "Dest_AccountInactive", "Age_Difference",
+        "Origin_LoanLeverage", "Dest_LoanLeverage",
+        "TransactionHour", "TransactionWeekday", "TransactionMonth", "TransactionQuarter",
+        "IsWeekend", "IsBusinessHours", "IsNightTime",
+        "LargeTransferFlag", "VeryLargeTransferFlag", "UnusualTimingFlag", "HighRiskFlag", "CrossTypeTransfer"
+    ]
+    df = df[features_to_keep]
+
     print("✅ Preprocessing complete. Data ready for model prep.", flush=True)
 
     return df
