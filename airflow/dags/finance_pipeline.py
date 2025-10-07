@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 import os
 import pandas as pd
@@ -23,7 +23,7 @@ with DAG(
     dag_id="synthetic_finance_pipeline",
     default_args=default_args,
     description="Synthetic Finance Anomaly Detection Pipeline",
-    schedule_interval=None,
+    schedule=None,
     start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
@@ -89,25 +89,21 @@ with DAG(
     preprocess_task = PythonOperator(
         task_id="preprocess",
         python_callable=step1_preprocess,
-        provide_context=True,
     )
 
     model_prep_task = PythonOperator(
         task_id="model_prep",
         python_callable=step2_model_prep,
-        provide_context=True,
     )
 
     train_task = PythonOperator(
         task_id="train",
         python_callable=step3_train,
-        provide_context=True,
     )
 
     evaluate_task = PythonOperator(
         task_id="evaluate",
         python_callable=step4_evaluate,
-        provide_context=True,
     )
 
     preprocess_task >> model_prep_task >> train_task >> evaluate_task
