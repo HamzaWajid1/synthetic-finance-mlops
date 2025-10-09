@@ -40,4 +40,4 @@ Project Documentation.docx
 .github\workflows\python-tests-dev.yml
 .github\workflows\python-tests-staging.yml
 
-artifacts/
+/artifacts/
