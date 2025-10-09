@@ -5,10 +5,21 @@ import os
 import pandas as pd
 import joblib
 
+import sys
+import os
+
+# Get the absolute path to your project root
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
 from src.preprocess import preprocess_data
 from src.model_prep import prepare_model_data
 from src.prep_data_train import run_anomaly_models
 from src.evaluate import evaluate_models
+
+
+
 
 # Paths
 ARTIFACTS_DIR = "artifacts"
