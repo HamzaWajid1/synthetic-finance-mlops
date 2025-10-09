@@ -1,14 +1,25 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 import os
 import pandas as pd
 import joblib
 
+import sys
+import os
+
+# Get the absolute path to your project root
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
 from src.preprocess import preprocess_data
 from src.model_prep import prepare_model_data
 from src.prep_data_train import run_anomaly_models
 from src.evaluate import evaluate_models
+
+
+
 
 # Paths
 ARTIFACTS_DIR = "artifacts"
@@ -23,7 +34,7 @@ with DAG(
     dag_id="synthetic_finance_pipeline",
     default_args=default_args,
     description="Synthetic Finance Anomaly Detection Pipeline",
-    schedule_interval=None,
+    schedule=None,
     start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
@@ -89,25 +100,21 @@ with DAG(
     preprocess_task = PythonOperator(
         task_id="preprocess",
         python_callable=step1_preprocess,
-        provide_context=True,
     )
 
     model_prep_task = PythonOperator(
         task_id="model_prep",
         python_callable=step2_model_prep,
-        provide_context=True,
     )
 
     train_task = PythonOperator(
         task_id="train",
         python_callable=step3_train,
-        provide_context=True,
     )
 
     evaluate_task = PythonOperator(
         task_id="evaluate",
         python_callable=step4_evaluate,
-        provide_context=True,
     )
 
     preprocess_task >> model_prep_task >> train_task >> evaluate_task
